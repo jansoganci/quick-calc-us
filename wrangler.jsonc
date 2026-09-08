@@ -1,14 +1,11 @@
 {
-  "name": "maliyet",
+  "name": "quick-calc-us",
   "compatibility_date": "2026-08-15",
-  // Production lives on maliyet.lol only. Do not re-enable workers.dev:
-  // this account's workers.dev subdomain is emlak-crm.
+  // No domain confirmed yet — do not add "routes" until the product owner
+  // confirms one. workers_dev/preview_urls stay disabled in the meantime,
+  // same pattern as the TR sibling app.
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [
-    { "pattern": "maliyet.lol/*", "zone_name": "maliyet.lol" },
-    { "pattern": "www.maliyet.lol/*", "zone_name": "maliyet.lol" }
-  ],
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"

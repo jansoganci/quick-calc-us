@@ -37,7 +37,7 @@ export function InfoTooltip({ text }: { text: string }) {
       <button
         type="button"
         aria-expanded={open}
-        aria-label="Bilgi"
+        aria-label="Info"
         onClick={(event) => {
           // NumberField/TextField wrap this in a <label>; without stopping the
           // event here, a click on this button also activates the label's

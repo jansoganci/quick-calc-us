@@ -31,55 +31,6 @@ export default tseslint.config(
     },
   },
   {
-    // Quick and Detailed are separate business engines and must never import each
-    // other's logic (architecture R5). This uses `no-restricted-paths` rather than
-    // extending the `no-restricted-imports` block below, because a second flat-config
-    // block would REPLACE that rule for the matched files and silently drop the
-    // React/features/components/data restrictions.
-    files: ['src/**/*.{ts,tsx}'],
-    plugins: { 'import-x': importX },
-    rules: {
-      'import-x/no-restricted-paths': [
-        'error',
-        {
-          basePath: import.meta.dirname,
-          zones: [
-            {
-              target: './src/core/detailed',
-              from: './src/core/quick',
-              message: 'Detailed must not import Quick business logic (R5).',
-            },
-            {
-              target: './src/core/quick',
-              from: './src/core/detailed',
-              message: 'Quick must not import Detailed business logic (R5).',
-            },
-            {
-              target: './src/features/detailed',
-              from: './src/core/quick',
-              message: 'Detailed features must not import Quick business logic (R5).',
-            },
-            {
-              target: './src/features/detailed',
-              from: './src/features/quick-calc',
-              message: 'Detailed features must not import Quick features (R5).',
-            },
-            {
-              target: './src/features/quick-calc',
-              from: './src/core/detailed',
-              message: 'Quick features must not import Detailed business logic (R5).',
-            },
-            {
-              target: './src/features/quick-calc',
-              from: './src/features/detailed',
-              message: 'Quick features must not import Detailed features (R5).',
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
     files: ['src/core/**/*.ts'],
     rules: {
       'no-restricted-imports': [

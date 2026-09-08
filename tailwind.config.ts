@@ -5,9 +5,10 @@ import daisyui from 'daisyui'
 /**
  * The approved Quick Calculation palette — the single source of truth for colour.
  *
- * Values come from `docs/design.md` ("Tokens used in the mock") and
- * `docs/FRONTEND_IMPLEMENTATION_SPEC.md` §1. Do not add a colour here that those
- * documents do not approve, and do not restate any of these values in a component.
+ * Values come from `docs/DESIGN_DIRECTION.md` and
+ * `docs/FRONTEND_IMPLEMENTATION_SPEC.md` §1, inherited from the TR sibling app.
+ * Do not add a colour here that those documents do not approve, and do not
+ * restate any of these values in a component.
  *
  * Every entry below is emitted as a `--qc-*` custom property on `:root` and exposed
  * as a Tailwind colour (`text-qc-ink`, `bg-qc-page`, `border-qc-rule`, …). A dark
@@ -53,12 +54,6 @@ const QC_COLORS = {
   'bar-pos': '#A8AEB6',
   'bar-investment-recovery': '#CFD3D8',
   'bar-remaining': '#1D3A5F',
-
-  // Detailed's reconciliation bar needs nine stops where Quick's needs eight, so
-  // two tones join the same monotone ramp. It stays one quantity divided, not a
-  // hue scale. See DETAILED_FRONTEND_IMPLEMENTATION_SPEC.md §4.4 (D-2).
-  'bar-channel': '#4A515C',
-  'bar-owner': '#7C838C',
 } as const
 
 /** Focus and error rings, per FRONTEND_IMPLEMENTATION_SPEC.md §1. */
@@ -82,23 +77,6 @@ export default {
   theme: {
     extend: {
       colors: { qc: themeColors },
-      /**
-       * `lg` is the breakpoint that switches the page from the stacked mobile
-       * layout to the desktop one, and the report has to print in the desktop
-       * form: a print media query is evaluated against the *page area*, which at
-       * A4 portrait with 12mm margins is ~704px — below 1024, so every `lg:`
-       * rule would otherwise switch off on paper and the PDF would carry the
-       * phone layout (missing month-table columns, the small chart, the
-       * transposed channel table, an empty assumptions block).
-       *
-       * Redefining the screen rather than adding `print:` beside each `lg:` keeps
-       * one expression of the intent, and makes the PDF identical whatever device
-       * printed it. Cost: Tailwind generates no `max-lg:` variant for a `raw`
-       * screen — nothing uses one, and `reportGuards.test.ts` keeps it that way.
-       *
-       * See docs/archive/DETAILED_REPORT_IMPLEMENTATION_PLAN.md T-01.
-       */
-      screens: { lg: { raw: 'screen and (min-width: 1024px), print' } },
       fontFamily: {
         sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],

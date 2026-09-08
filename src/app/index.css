@@ -90,8 +90,8 @@
     color: var(--qc-subtle);
   }
 
-  /* Names in Detailed's repeating rows are text, not figures: Plex Sans, left
-     aligned. Everything else about the control is unchanged. */
+  /* A text field's value is text, not a figure: Plex Sans, left aligned.
+     Everything else about the control is unchanged. */
   .qc-input.is-text {
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
     text-align: left;
@@ -273,10 +273,10 @@
     line-height: 1.6;
   }
 
-  /* The report's business-name dialog. A native `<dialog>` carries the focus
-     trap, Esc and the inert background, so the only thing left to write is the
-     surface: a sheet from the bottom on a phone, a 400px panel centred from
-     `lg`. No shadow, no oversized frame — DESIGN_DIRECTION V1/V9. */
+  /* A native `<dialog>` carries the focus trap, Esc and the inert background,
+     so the only thing left to write is the surface: a sheet from the bottom on
+     a phone, a 400px panel centred from `lg`. No shadow, no oversized frame —
+     DESIGN_DIRECTION V1/V9. */
   .qc-dialog {
     position: fixed;
     inset: 0;
@@ -343,133 +343,5 @@
   .qc-enter,
   .qc-live {
     animation: none;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   The report — docs/DETAILED_REPORT_IMPLEMENTATION_PLAN.md §7.2, §10, T-02/09/13.
-
-   The report is the application's own result, printed: the same components, the
-   same view model, the same figures. Only the page frame, a cover and an
-   appendix are print-specific, and they live here rather than in a second
-   stylesheet so paper and screen cannot drift apart.
-
-   `qc-screen-only` / `qc-print-only` are used instead of Tailwind's `print:`
-   variant wherever an element must appear in exactly one medium: `lg:` now
-   includes print (tailwind.config.ts), so `hidden lg:block print:hidden` would
-   depend on which of two media-query blocks Tailwind emits last. These two
-   classes do not.
-   --------------------------------------------------------------------------- */
-
-@page {
-  size: A4 portrait;
-  margin: 14mm 12mm;
-}
-
-@media screen {
-  .qc-print-only {
-    display: none !important;
-  }
-}
-
-@media print {
-  .qc-screen-only {
-    display: none !important;
-  }
-
-  /* `!important` because the elements these mark are `hidden` on screen, and a
-     print-only block must win over that whatever order Tailwind emits. */
-  .qc-print-only {
-    display: block !important;
-  }
-
-  /* The application frame is a screen device: on paper the page box is the sheet,
-     and the @page margin is the margin. */
-  .qc-sheet {
-    max-width: none !important;
-    border: 0 !important;
-  }
-
-  .qc-report-cover,
-  .qc-report-appendix,
-  .qc-report-body {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  html,
-  body {
-    background: #fff;
-  }
-
-  /* A print started mid-transition would otherwise capture the faded frame. */
-  .qc-enter,
-  .qc-live {
-    animation: none !important;
-  }
-
-  /* The masthead and the summary pane are sticky, the mobile bar is fixed; on
-     paper each would either repeat or float over the content. */
-  [class*='sticky'],
-  [class*='fixed'] {
-    position: static !important;
-  }
-
-  /* Chrome appends the href after a link when printing. The colophon is the only
-     link in the report and it is already written out as text. */
-  a[href]::after {
-    content: none;
-  }
-
-  h1,
-  h2,
-  h3 {
-    break-after: avoid;
-  }
-
-  p,
-  li {
-    orphans: 3;
-    widows: 3;
-  }
-
-  /* Backgrounds are dropped by default when printing, which would leave the
-     reconciliation bar an empty outline with white labels on white. Scoped to
-     the bar and its swatches — never the page — so the rest of the report stays
-     ink on paper. */
-  .qc-print-ink {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .qc-report-cover {
-    break-after: page;
-  }
-
-  .qc-report-appendix {
-    break-before: page;
-  }
-
-  /* Sections that fit a page are kept whole; the projection and the appendix are
-     allowed to break, and their tables carry the row and header rules below. */
-  .qc-report-section {
-    break-inside: avoid;
-  }
-
-  .qc-report-flow {
-    break-inside: auto;
-  }
-
-  .qc-report-table thead {
-    display: table-header-group;
-  }
-
-  .qc-report-table tr,
-  .qc-report-row {
-    break-inside: avoid;
-  }
-
-  svg {
-    break-inside: avoid;
   }
 }

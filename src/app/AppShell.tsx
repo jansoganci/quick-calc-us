@@ -1,50 +1,32 @@
 import type { ReactNode } from 'react'
-import { BrandMark } from './BrandMark.tsx'
-import { ModeRow } from './ModeRow.tsx'
-import { SHELL_COPY, type CalculationMode } from './shellCopy.ts'
+import { SHELL_COPY } from './shellCopy.ts'
 
 type AppShellProps = {
-  mode: CalculationMode
-  onModeChange: (mode: CalculationMode) => void
   children: ReactNode
 }
 
 /**
- * The page frame both calculation modes render inside: one 1152px sheet, the
- * masthead with the mode switch, and the colophon. Keeping it here rather than in
- * either feature is what lets the two modes share a shell without importing each
- * other (architecture R5).
+ * The page frame the calculator renders inside: one 1152px sheet, the
+ * masthead, and the colophon. Inherited from the TR sibling app's shell
+ * (`docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`, `docs/DESIGN_DIRECTION.md`)
+ * with the two-mode switch removed — this product is Quick-only (US-6/US-8 in
+ * `docs/US_PRODUCT_SCOPE.md` do not authorise a Detailed US engine yet).
  */
-export function AppShell({ mode, onModeChange, children }: AppShellProps) {
+export function AppShell({ children }: AppShellProps) {
   return (
     <div className="qc-sheet mx-auto max-w-[1152px] overflow-x-clip border-x border-qc-rule bg-qc-surface">
       <AppHeader />
-      <ModeRow mode={mode} onModeChange={onModeChange} />
       {children}
       <AppFooter />
     </div>
   )
 }
 
-/**
- * Masthead: the mark, the product name and the slogan.
- *
- * The mode switch used to live here, in the top-right corner, where visitors did
- * not find it — see `ModeRow.tsx`. With it gone the slogan fits beside the name at
- * every width, so the phone-only slogan row it used to displace is gone too.
- *
- * Still sticky from `lg`: the result panes in both modes offset by its height
- * (`lg:top-14`), and it keeps the product name in view on a long page.
- */
 function AppHeader() {
   return (
-    <header className="qc-screen-only flex h-[52px] items-center gap-2.5 border-b border-qc-rule bg-qc-surface px-[18px] lg:sticky lg:top-0 lg:z-10 lg:h-14 lg:px-[30px]">
-      {/* The mark sits tight to the name — 8px, one lockup, not two elements. */}
-      <span className="flex shrink-0 items-center gap-2">
-        <BrandMark size={18} />
-        <span className="text-sm font-semibold tracking-[-0.005em] text-qc-ink lg:text-[15px]">
-          {SHELL_COPY.productName}
-        </span>
+    <header className="flex h-[52px] items-center gap-2.5 border-b border-qc-rule bg-qc-surface px-[18px] lg:sticky lg:top-0 lg:z-10 lg:h-14 lg:px-[30px]">
+      <span className="text-sm font-semibold tracking-[-0.005em] text-qc-ink lg:text-[15px]">
+        {SHELL_COPY.productName}
       </span>
       <span className="truncate text-xs text-qc-muted">{SHELL_COPY.slogan}</span>
     </header>
@@ -53,14 +35,11 @@ function AppHeader() {
 
 function AppFooter() {
   return (
-    <footer className="qc-screen-only border-t border-qc-rule px-[18px] py-[18px] text-xs text-qc-muted lg:px-[30px]">
+    <footer className="border-t border-qc-rule px-[18px] py-[18px] text-xs text-qc-muted lg:px-[30px]">
       <div className="flex flex-col gap-[5px] lg:flex-row lg:items-baseline lg:justify-between lg:gap-6">
         <span>{SHELL_COPY.footerNature}</span>
         <span className="font-mono text-[11px] text-qc-subtle">
-          {SHELL_COPY.domain} · {SHELL_COPY.footerScope}
-          {/* Attribution is opt-in: `shellCopy.ts` ships it as null so an
-              unconfigured build renders the three specified items and nothing
-              more, rather than a placeholder handle pointing at a stranger. */}
+          {SHELL_COPY.domain ?? 'domain TBD'} · {SHELL_COPY.footerScope}
           {SHELL_COPY.authorHandle && SHELL_COPY.authorUrl ? (
             <>
               {' · '}

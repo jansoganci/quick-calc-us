@@ -2,8 +2,6 @@
 
 Active sources of truth live in this folder.
 
-Finished execution plans live in [`archive/`](./archive/). They are kept for history. They are not current product or financial authority.
-
 If two documents appear to disagree, use the authority order in [`CLAUDE.md`](../CLAUDE.md).
 
 ---
@@ -12,30 +10,27 @@ If two documents appear to disagree, use the authority order in [`CLAUDE.md`](..
 
 | Document | Owns |
 | --- | --- |
-| [`quick-calculation-scope-v1.md`](./quick-calculation-scope-v1.md) | Quick / Lite product & financial scope — inputs, formulas, outputs, terminology |
-| [`US_PRODUCT_SCOPE.md`](./US_PRODUCT_SCOPE.md) | US variant of the same product — owner locks US-1…US-4 recorded (v0.2). Implementation not authorised. Does not replace the Turkey specs |
-| [`DETAILED_FEASIBILITY_DECISIONS.md`](./DETAILED_FEASIBILITY_DECISIONS.md) | Detailed Feasibility locked decisions and v1 exclusions. Not yet a full financial specification |
-| [`DETAILED_FINANCIAL_SPEC.md`](./DETAILED_FINANCIAL_SPEC.md) | Detailed Feasibility formula contract — inputs, defaults, formulas, outputs, edge states, golden vector |
-| [`DETAILED_FRONTEND_IMPLEMENTATION_SPEC.md`](./DETAILED_FRONTEND_IMPLEMENTATION_SPEC.md) | Detailed Feasibility UI — information architecture, layout, results hierarchy, charts, states, mode switch |
+| [`US_PRODUCT_SCOPE.md`](./US_PRODUCT_SCOPE.md) | THE financial spec for this product — inputs, formulas, outputs, the 50-state + DC sales-tax table (v0.2, owner locks US-1…US-10) |
 | [`TECH_STACK_AND_CONSTRAINTS.md`](./TECH_STACK_AND_CONSTRAINTS.md) | Stack, runtime, deployment, persistence, technical exclusions |
 | [`APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`](./APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md) | Folder structure, layer boundaries, dependency direction, reuse rules, naming |
-| [`DESIGN_DIRECTION.md`](./DESIGN_DIRECTION.md) | Locked visual & UX direction for Quick / Lite (inherited by Detailed) |
-| [`FRONTEND_IMPLEMENTATION_SPEC.md`](./FRONTEND_IMPLEMENTATION_SPEC.md) | Quick / Lite UI measurements, tokens, field map, copy |
-| [`design.md`](./design.md) | Design index plus layout-frame notes from the HTML preview |
-| [`HANDOFF.md`](./HANDOFF.md) | Living status log — what shipped each session and what still needs a human (accounts, outreach). Not a specification. |
+| [`DESIGN_DIRECTION.md`](./DESIGN_DIRECTION.md) | Locked visual & UX direction, inherited from the TR sibling app |
+| [`FRONTEND_IMPLEMENTATION_SPEC.md`](./FRONTEND_IMPLEMENTATION_SPEC.md) | UI measurements, tokens, field map — TR copy/currency examples; reuse the direction, not the Turkish wording or TRY formatting |
 
 [`CLAUDE.md`](../CLAUDE.md) is operating guidance for coding models. It is not a specification.
 
 ---
 
-## Archive
+## Not in this repo
 
-| Document | Why it is archived |
-| --- | --- |
-| [`archive/QUICK_CALCULATION_CORE_IMPLEMENTATION_PLAN.md`](./archive/QUICK_CALCULATION_CORE_IMPLEMENTATION_PLAN.md) | Quick core execution plan — the engine is implemented |
-| [`archive/FRONTEND_IMPLEMENTATION_PLAN.md`](./archive/FRONTEND_IMPLEMENTATION_PLAN.md) | Quick frontend execution plan — the Lite UI is implemented |
-| [`archive/DRAFT_PERSISTENCE_AND_REPORT_OUTPUT.md`](./archive/DRAFT_PERSISTENCE_AND_REPORT_OUTPUT.md) | Detailed draft autosave record — Part A is implemented; persistence rules stay in `TECH_STACK_AND_CONSTRAINTS.md` §4 |
-| [`archive/DETAILED_REPORT_IMPLEMENTATION_PLAN.md`](./archive/DETAILED_REPORT_IMPLEMENTATION_PLAN.md) | Detailed downloadable-report execution plan — the report is implemented |
-| [`archive/PRODUCT_BREAKDOWN_AND_ONBOARDING_PLAN.md`](./archive/PRODUCT_BREAKDOWN_AND_ONBOARDING_PLAN.md) | Product-level contribution breakdown (DF-84) and onboarding (ⓘ help, sample fill) — both implemented, see `HANDOFF.md` |
+This is a fresh, separate codebase for the US variant of the product (sibling
+to the TR app maliyet.lol, not a fork or a locale switch). The TR product's
+own financial specs (Quick and Detailed Feasibility scope, formulas, decision
+logs) and its Detailed Feasibility engine do not apply here and are not
+copied into this repo. `US_PRODUCT_SCOPE.md` is self-contained for the
+financial behaviour this product needs.
 
-See [`archive/README.md`](./archive/README.md).
+`DESIGN_DIRECTION.md` and `FRONTEND_IMPLEMENTATION_SPEC.md` are kept because
+the visual direction and UI structure are inherited as a starting point — see
+the top-level task brief. Their Turkish copy, TRY formatting and two-mode
+(Quick/Detailed) references do not apply to this repo; only the layout,
+tokens and interaction rules do.

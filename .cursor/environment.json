@@ -1,5 +1,5 @@
 {
-  "name": "F&B Financial Calculator",
+  "name": "Quick Calc (US)",
   "install": "npm ci",
   "terminals": [
     {

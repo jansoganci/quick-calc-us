@@ -19,9 +19,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (!this.state.hasError) return this.props.children
     return (
       <div className="mx-auto max-w-[620px] px-[18px] py-16">
-        <p className="text-lg text-qc-ink">Hesaplama ekranı yüklenemedi.</p>
+        <p className="text-lg text-qc-ink">The calculator failed to load.</p>
         <p className="mt-2 text-[13px] leading-relaxed text-qc-secondary">
-          Sayfayı yenileyip tekrar deneyin. Girdiğiniz değerler kaydedilmez.
+          Refresh the page and try again. Nothing you entered is saved.
         </p>
       </div>
     )

@@ -12,30 +12,27 @@ Before making any architectural, financial or implementation change, read the re
 
 | Document | Owns |
 | --- | --- |
-| `docs/quick-calculation-scope-v1.md` | Quick / Lite product & financial scope — inputs, formulas, outputs, terminology |
-| `docs/US_PRODUCT_SCOPE.md` | US variant of the same product — owner locks US-1…US-4 recorded (v0.2). Implementation not authorised; does not replace the Turkey specs |
-| `docs/DETAILED_FEASIBILITY_DECISIONS.md` | Detailed Feasibility locked decisions and v1 exclusions — not yet a full financial specification |
-| `docs/DETAILED_FINANCIAL_SPEC.md` | Detailed Feasibility formula contract — inputs, defaults, formulas, outputs, edge states, golden vector |
+| `docs/US_PRODUCT_SCOPE.md` | THE financial spec for this product — every input, formula and the 50-state + DC sales-tax table. Do not invent formulas outside it |
 | `docs/TECH_STACK_AND_CONSTRAINTS.md` | Stack, runtime, deployment, persistence, technical exclusions |
 | `docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md` | Folder structure, layer boundaries, dependency direction, reuse rules, naming |
-| `docs/DESIGN_DIRECTION.md` | Locked visual & UX direction |
-| `docs/FRONTEND_IMPLEMENTATION_SPEC.md` | Quick / Lite UI measurements, tokens, copy |
-| `docs/design.md` | Design index and layout-frame notes |
+| `docs/DESIGN_DIRECTION.md` | Locked visual & UX direction, inherited from the TR sibling app |
+| `docs/FRONTEND_IMPLEMENTATION_SPEC.md` | UI measurements, tokens, field map — reuse the direction; its Turkish copy and TRY formatting do not apply here |
 
-Finished execution plans live in `docs/archive/`. They are historical. Do not treat them as current authority.
+This repo is a fresh, separate codebase for the US variant of the product —
+a sibling of the TR app (maliyet.lol), not a fork or a locale switch inside
+it. The TR product's own financial specs and its Detailed Feasibility engine
+are not part of this repo; see `docs/README.md` for what "inherited" actually
+means for the two design/frontend documents above.
 
 ### Authority order
 
 If two documents appear to disagree:
 
-- **financial behaviour (Quick / Lite, Turkey)** → the Quick product/financial spec wins;
-- **financial behaviour (US variant)** → `docs/US_PRODUCT_SCOPE.md` wins for US substitutions; Turkey specs still win for Turkey; US implementation is not authorised until explicitly requested;
-- **Detailed product decisions recorded so far** → the Detailed Feasibility decisions document wins, without inventing formulas it does not contain;
-- **Detailed formulas, schema, defaults and edge states** → the Detailed Financial Specification wins, within the scope the decisions document locks;
+- **financial behaviour** → `docs/US_PRODUCT_SCOPE.md` wins. If something it needs isn't in there, stop and ask rather than guessing;
 - **stack, runtime, persistence** → the tech-stack document wins;
 - **code organisation and boundaries** → the architecture document wins;
 - **visual / UX locked rules** → the design-direction document wins;
-- **Quick UI measurements and copy** → the frontend implementation spec wins.
+- **UI measurements** → the frontend implementation spec wins (structure and tokens only — not its Turkish copy or currency formatting).
 
 Do not resolve a disagreement by picking whichever is easier to implement. Report it.
 

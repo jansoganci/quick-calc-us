@@ -4,30 +4,24 @@ This file applies to the entire repository. It is operational guidance, not a pr
 
 ## Project snapshot
 
-This is a Turkey-focused financial feasibility calculator for food-and-beverage businesses.
+This is a US-focused financial feasibility calculator for food-and-beverage businesses (Coffee Shop / Cafe preset). It is a fresh, separate codebase — a sibling of a TR app (maliyet.lol), not a fork or a locale switch inside it.
 
 - Stack: React 18, Vite, TypeScript, Tailwind CSS, daisyUI.
 - Runtime: client-side calculations, static assets on Cloudflare.
 - There is no database, authentication, or traditional application server.
-- The Quick Calculation engine and UI are implemented.
-- The Detailed Feasibility engine exists in `src/core/detailed/`; its feature UI is not implemented.
-- Quick and Detailed are separate business models. They may intentionally produce different results.
+- Nothing is implemented yet beyond the Phase 0 scaffold (app shell, no engine, no form). Quick Calculation only — no Detailed Feasibility engine in this repo.
 
 ## Sources of truth
 
 Read `docs/README.md` for the current documentation index. Use the following authority order when documents overlap:
 
-1. Quick financial behavior (Turkey): `docs/quick-calculation-scope-v1.md`
-1b. US variant of the same product: `docs/US_PRODUCT_SCOPE.md` — v0.2 owner locks recorded; implementation not authorised; does not replace the Turkey specs
-2. Detailed product decisions and exclusions: `docs/DETAILED_FEASIBILITY_DECISIONS.md`
-3. Detailed formulas, schema, defaults, edge states, and golden vector: `docs/DETAILED_FINANCIAL_SPEC.md`
-4. Stack, runtime, persistence, and technical exclusions: `docs/TECH_STACK_AND_CONSTRAINTS.md`
-5. Folder ownership and dependency direction: `docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`
-6. Locked visual and UX rules: `docs/DESIGN_DIRECTION.md`
-7. Quick UI measurements, tokens, field map, and copy: `docs/FRONTEND_IMPLEMENTATION_SPEC.md`
-8. Layout-frame notes: `docs/design.md`
+1. Financial behavior: `docs/US_PRODUCT_SCOPE.md` — the only financial spec for this product; do not invent formulas outside it
+2. Stack, runtime, persistence, and technical exclusions: `docs/TECH_STACK_AND_CONSTRAINTS.md`
+3. Folder ownership and dependency direction: `docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`
+4. Locked visual and UX rules: `docs/DESIGN_DIRECTION.md`
+5. UI measurements, tokens, field map: `docs/FRONTEND_IMPLEMENTATION_SPEC.md` — reuse the structure and tokens; its Turkish copy and TRY formatting do not apply here
 
-Documents under `docs/archive/` are historical execution plans, not current authority. `CLAUDE.md` is additional operating guidance, not a specification.
+`CLAUDE.md` is additional operating guidance, not a specification.
 
 Anything marked `LOCKED` or `APPROVED` is settled. Do not redesign, optimize, or reinterpret it without an explicit new product decision. If active sources genuinely contradict one another, report the conflict instead of silently choosing the easier behavior.
 
@@ -36,14 +30,11 @@ Anything marked `LOCKED` or `APPROVED` is settled. Do not redesign, optimize, or
 ```text
 src/
   app/                  root composition, error boundary, global CSS
-  core/quick/           pure Quick financial engine
-  core/detailed/        pure Detailed financial engine
-  features/quick-calc/  Quick form state, view model, labels, and UI
   components/           reusable domain-neutral UI primitives
-  lib/                  generic parsing and formatting helpers
+  lib/                  generic parsing and formatting helpers (currently TR-locale; rework for en-US/USD when the UI is built)
 ```
 
-Tests are colocated as `*.test.ts`. Each engine exposes its supported public API through its own `index.ts`.
+`core/quick-us/` (the engine) and `data/us/salesTaxRates.ts` are created only once Phase 1 is authorised (`docs/US_PRODUCT_SCOPE.md` §8). `features/` likewise waits for Phase 2. Tests are colocated as `*.test.ts`.
 
 ## Architecture rules
 
@@ -55,10 +46,9 @@ app -> features -> core -> lib
 ```
 
 - `core/**` is pure TypeScript. It must not import React, UI state, features, components, benchmark data, browser APIs, time, randomness, storage, or network code.
-- `components/**` is domain-neutral. It must not know about rent, VAT, margins, payback, or either engine.
+- `components/**` is domain-neutral. It must not know about rent, sales tax, margins, payback, or the engine.
 - `features/**` owns screen composition, React state, labels, parsing orchestration, and engine-result-to-display mapping.
 - `lib/**` contains generic helpers, not business rules.
-- Quick and Detailed must never import business logic or feature code from one another.
 - External consumers import an engine through `src/core/<mode>/index.ts`. Files within an engine import sibling modules directly, not through their own barrel.
 - Avoid circular imports; ESLint enforces key boundaries.
 
@@ -70,7 +60,7 @@ Do not introduce service/repository layers, dependency injection, generic engine
 - Financial formulas never live in React components.
 - Quick and Detailed defaults, limits, types, validation, and calculations remain owned by their respective engine folders.
 - Do not duplicate defaults or input limits in a feature or component. Import the engine-owned values.
-- Engines return raw numeric values. Presentation rounding and Turkish formatting belong in `src/lib/` and the feature view model.
+- Engines return raw numeric values. Presentation rounding and en-US/USD formatting belong in `src/lib/` and the feature view model.
 - Any displayed monetary amount, margin, cost, earnings, break-even, or payback figure must come from an engine or view model. Components may calculate visual-only values such as bar widths.
 - Validation returns structured errors; engines must not throw for documented input or edge states.
 - Never allow a calculation to emit `NaN` or `Infinity`.
@@ -89,7 +79,7 @@ A refactor that changes a result is a financial product change, not a refactor. 
 
 ## Frontend rules
 
-- Preserve the existing quiet, analytical, Turkish-first design system.
+- Preserve the inherited quiet, analytical design system (English copy, USD, en-US formatting for this product).
 - Reuse the approved Tailwind tokens from `tailwind.config.ts`; do not add ad hoc colors in components.
 - Global component styles live in `src/app/index.css`. Feature-specific structure stays with the feature.
 - Keep labels and product copy centralized in the feature's `labels.ts`.
@@ -111,7 +101,7 @@ A refactor that changes a result is a financial product change, not a refactor. 
 
 ## Working discipline
 
-- Implement only the requested scope. Do not build adjacent phases or anticipated Detailed UI work.
+- Implement only the requested scope. Do not build adjacent phases (engine before authorised, UI before the engine, Detailed Feasibility at all) or anticipated work.
 - Inspect the working tree before editing. Existing changes may belong to the user; preserve them and do not rewrite unrelated files.
 - Do not use destructive Git commands or discard user changes.
 - Prefer the smallest change that satisfies the requirement.
