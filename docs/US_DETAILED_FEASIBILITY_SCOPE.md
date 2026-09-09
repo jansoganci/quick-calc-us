@@ -163,8 +163,9 @@ Direct port of Turkey Detailed's exclusions:
 | Topic | Notes |
 | --- | --- |
 | Per-state marketplace-facilitator nuance | UD-1 treats all states uniformly (delivery revenue never gets a merchant-added sales tax). If a state genuinely differs, or a threshold/exception matters, that is a future override table, same shape as `US_PRODUCT_SCOPE.md`'s NH/DC rows — not built now. |
-| US Detailed golden vector | Computed once the financial spec (formulas, defaults, edge states) is written and the engine is authorised — same sequencing as Quick (`US_PRODUCT_SCOPE.md` §9, US-11). |
-| Financial spec document | This document locks scope and shape. A `US_DETAILED_FINANCIAL_SPEC.md` (formulas, defaults, edge states, golden vector) is the next document once this scope is confirmed — not written yet. |
+| USD input limits | `US_DETAILED_FINANCIAL_SPEC.md` §5 ships a first-pass rescale of TR's TRY ceilings, not researched US market caps — same open status as US-7 in `US_PRODUCT_SCOPE.md` §9. |
+
+The financial spec (`US_DETAILED_FINANCIAL_SPEC.md` — formulas, defaults, limits, edge states, golden vector) is now written. No engine or UI is authorised from either document yet.
 
 ---
 

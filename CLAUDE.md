@@ -13,7 +13,8 @@ Before making any architectural, financial or implementation change, read the re
 | Document | Owns |
 | --- | --- |
 | `docs/US_PRODUCT_SCOPE.md` | Quick Calculation financial spec — every input, formula and the 50-state + DC sales-tax table. Do not invent formulas outside it |
-| `docs/US_DETAILED_FEASIBILITY_SCOPE.md` | Detailed Feasibility scope and locked decisions (v0.1). Not yet a full formula-level financial spec — no engine or UI authorised from it |
+| `docs/US_DETAILED_FEASIBILITY_SCOPE.md` | Detailed Feasibility scope and locked decisions (v0.1) |
+| `docs/US_DETAILED_FINANCIAL_SPEC.md` | Detailed Feasibility formula contract — inputs, defaults, limits, formulas, edge states, golden vector (v0.1). No engine or UI authorised from it |
 | `docs/TECH_STACK_AND_CONSTRAINTS.md` | Stack, runtime, deployment, persistence, technical exclusions |
 | `docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md` | Folder structure, layer boundaries, dependency direction, reuse rules, naming |
 | `docs/DESIGN_DIRECTION.md` | Locked visual & UX direction, inherited from the TR sibling app |
@@ -31,6 +32,7 @@ If two documents appear to disagree:
 
 - **Quick Calculation financial behaviour** → `docs/US_PRODUCT_SCOPE.md` wins. If something it needs isn't in there, stop and ask rather than guessing;
 - **Detailed Feasibility scope/decisions** → `docs/US_DETAILED_FEASIBILITY_SCOPE.md` wins, without inventing formulas it does not contain;
+- **Detailed Feasibility formulas, defaults, limits and edge states** → `docs/US_DETAILED_FINANCIAL_SPEC.md` wins, within the scope the decisions document locks;
 - **stack, runtime, persistence** → the tech-stack document wins;
 - **code organisation and boundaries** → the architecture document wins;
 - **visual / UX locked rules** → the design-direction document wins;
