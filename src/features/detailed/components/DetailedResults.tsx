@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { cn } from '../../../lib/cn.ts'
 import { COPY } from '../labels.ts'
 import type { DetailedView } from '../viewModel.ts'
 import { AssumptionsList } from './AssumptionsList.tsx'
@@ -21,7 +22,7 @@ import { ScenarioTable } from './ScenarioTable.tsx'
  */
 export function DetailedResults({ view, canPrintReport, onOpenReport }: { view: DetailedView; canPrintReport: boolean; onOpenReport: () => void }) {
   return (
-    <div className="mx-auto w-full max-w-[1092px] px-[18px] py-6 lg:px-[30px] lg:py-8">
+    <div className="qc-report-body mx-auto w-full max-w-[1092px] px-[18px] py-6 lg:px-[30px] lg:py-8">
       <Section index={1} title={COPY.moneyFlowTitle}>
         <ResultBar breakdown={view.breakdown} gross={view.breakdown.total} />
         <SankeyBreakdown breakdown={view.breakdown} gross={view.breakdown.total} />
@@ -31,7 +32,7 @@ export function DetailedResults({ view, canPrintReport, onOpenReport }: { view: 
         <ScenarioTable scenarios={view.scenarios} />
       </Section>
 
-      <Section index={3} title={COPY.monthlyResultTitle}>
+      <Section index={3} title={COPY.monthlyResultTitle} flows>
         <div className="hidden lg:block">
           <ProjectionChart data={view.projection} size="lg" />
         </div>
@@ -85,9 +86,9 @@ export function DetailedResults({ view, canPrintReport, onOpenReport }: { view: 
   )
 }
 
-function Section({ index, title, children }: { index: number; title: string; children: ReactNode }) {
+function Section({ index, title, children, flows = false }: { index: number; title: string; children: ReactNode; flows?: boolean }) {
   return (
-    <section className="qc-report-section border-t border-qc-rule py-6 first:border-t-0 first:pt-0 lg:py-7">
+    <section className={cn(flows ? 'qc-report-flow' : 'qc-report-section', 'border-t border-qc-rule py-6 first:border-t-0 first:pt-0 lg:py-7')}>
       <div className="mb-4 flex items-baseline gap-[10px]">
         <span className="font-mono text-[11px] tabular-nums text-qc-subtle">{String(index).padStart(2, '0')}</span>
         <h2 className="m-0 text-[15px] font-semibold text-qc-ink">{title}</h2>

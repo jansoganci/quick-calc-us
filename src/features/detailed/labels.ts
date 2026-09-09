@@ -211,6 +211,9 @@ export const COPY = {
   fixedCostAnnualIncrease: 'Fixed cost annual increase',
   engineVersion: 'Engine version',
   assumptionRowCount: (count: number) => (count === 1 ? '1 row' : `${count} rows`),
+  advancedAssumptions: 'Advanced assumptions — annual increases',
+  advancedAssumptionsNote:
+    'Sales price, product cost, and fixed cost annual increases. Default 0% — figures you enter stay the same throughout the projection. Always visible on the result screen.',
 
   // Result tables (`ScenarioTable`, `ChannelTable`, `ProductContributionTable`, `MonthTable`)
   netRevenue: 'Revenue',

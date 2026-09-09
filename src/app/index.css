@@ -394,6 +394,20 @@
     position: static !important;
   }
 
+  /* The application frame is a screen device: on paper the page box is the
+     sheet, and the @page margin is the margin. */
+  .qc-sheet {
+    max-width: none !important;
+    border: 0 !important;
+  }
+
+  .qc-report-cover,
+  .qc-report-appendix,
+  .qc-report-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   /* Browsers drop CSS backgrounds when printing unless a node opts in. This
      is scoped to the reconciliation bar's segments only — never the page. */
   .qc-print-ink {
@@ -425,6 +439,10 @@
      are allowed to break, and their tables carry the row/header rules below. */
   .qc-report-section {
     break-inside: avoid;
+  }
+
+  .qc-report-flow {
+    break-inside: auto;
   }
 
   .qc-report-table thead {

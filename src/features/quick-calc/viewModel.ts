@@ -238,7 +238,7 @@ function toRawInput(form: QuickFormState): QuickCalculationInput {
     const parsed = parseNumber(form[field])
     if (parsed.status === 'empty') continue
     if (parsed.status === 'invalid') raw[field] = Number.NaN
-    else raw[field] = parsed.value / 100
+    else raw[field] = PERCENT_FIELDS.has(field) ? parsed.value / 100 : parsed.value
   }
   raw.usState = form.usState === '' ? undefined : form.usState
   const taxParsed = parseNumber(form.salesTaxRate)

@@ -2,6 +2,7 @@ import { NumberField } from '../../../components/NumberField.tsx'
 import { TextField } from '../../../components/TextField.tsx'
 import type { LineRow } from '../formState.ts'
 import { COPY } from '../labels.ts'
+import { useNewestRowOpen } from '../hooks/useNewestRowOpen.ts'
 
 type LineRowsProps = {
   collection: 'opexLines' | 'capexItems'
@@ -18,10 +19,12 @@ type LineRowsProps = {
 
 /** A named amount, repeated. Used for both other-OPEX lines and CAPEX items — same shape, different unit. */
 export function LineRows({ collection, lines, amountUnit, amountLabel, addLabel, errorFor, onFieldChange, onBlur, onAdd, onRemove }: LineRowsProps) {
+  const rows = useNewestRowOpen(lines.map((line) => line.id))
+
   return (
     <div className="space-y-3">
       {lines.map((line, index) => (
-        <div key={line.id} className="grid grid-cols-[1fr_160px_auto] items-end gap-2.5">
+        <div key={line.id} ref={rows.rowRef(line.id)} className="grid grid-cols-[1fr_160px_auto] items-end gap-2.5">
           <TextField
             id={`${collection}.${index}.name`}
             label="Name"

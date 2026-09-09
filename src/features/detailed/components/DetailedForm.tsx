@@ -433,39 +433,47 @@ function AssumptionsSection({ calc }: { calc: DetailedCalcApi }) {
           grouped
         />
       </div>
-      <div className="grid grid-cols-2 gap-x-[13px] gap-y-[15px]">
-        <NumberField
-          id="assumptions.salesPriceAnnualIncrease"
-          label="Sales price annual increase"
-          value={form.assumptions.salesPriceAnnualIncrease}
-          onChange={(v) => calc.setAssumption('salesPriceAnnualIncrease', v)}
-          onBlur={() => calc.markTouched('assumptions.salesPriceAnnualIncrease')}
-          unit="%"
-          error={calc.errorFor('assumptions.salesPriceAnnualIncrease')}
-          grouped
-        />
-        <NumberField
-          id="assumptions.productCogsAnnualIncrease"
-          label="Product cost annual increase"
-          value={form.assumptions.productCogsAnnualIncrease}
-          onChange={(v) => calc.setAssumption('productCogsAnnualIncrease', v)}
-          onBlur={() => calc.markTouched('assumptions.productCogsAnnualIncrease')}
-          unit="%"
-          error={calc.errorFor('assumptions.productCogsAnnualIncrease')}
-          grouped
-        />
-        <NumberField
-          id="assumptions.fixedCostAnnualIncrease"
-          label="Fixed cost annual increase"
-          value={form.assumptions.fixedCostAnnualIncrease}
-          onChange={(v) => calc.setAssumption('fixedCostAnnualIncrease', v)}
-          onBlur={() => calc.markTouched('assumptions.fixedCostAnnualIncrease')}
-          unit="%"
-          error={calc.errorFor('assumptions.fixedCostAnnualIncrease')}
-          span="full"
-          grouped
-        />
-      </div>
+      <details className="max-w-[600px] border-t border-qc-rule-row pt-4">
+        <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-3 text-[13px] text-qc-secondary">
+          <span>{COPY.advancedAssumptions}</span>
+          <span className="font-mono text-[13px] tabular-nums text-qc-muted">
+            {`${form.assumptions.salesPriceAnnualIncrease || '0'}% · ${form.assumptions.productCogsAnnualIncrease || '0'}% · ${form.assumptions.fixedCostAnnualIncrease || '0'}%`}
+          </span>
+        </summary>
+        <div className="mt-4 grid grid-cols-1 gap-x-[13px] gap-y-[15px] lg:grid-cols-3">
+          <NumberField
+            id="assumptions.salesPriceAnnualIncrease"
+            label="Sales price annual increase"
+            value={form.assumptions.salesPriceAnnualIncrease}
+            onChange={(v) => calc.setAssumption('salesPriceAnnualIncrease', v)}
+            onBlur={() => calc.markTouched('assumptions.salesPriceAnnualIncrease')}
+            unit="%"
+            error={calc.errorFor('assumptions.salesPriceAnnualIncrease')}
+            grouped
+          />
+          <NumberField
+            id="assumptions.productCogsAnnualIncrease"
+            label="Product cost annual increase"
+            value={form.assumptions.productCogsAnnualIncrease}
+            onChange={(v) => calc.setAssumption('productCogsAnnualIncrease', v)}
+            onBlur={() => calc.markTouched('assumptions.productCogsAnnualIncrease')}
+            unit="%"
+            error={calc.errorFor('assumptions.productCogsAnnualIncrease')}
+            grouped
+          />
+          <NumberField
+            id="assumptions.fixedCostAnnualIncrease"
+            label="Fixed cost annual increase"
+            value={form.assumptions.fixedCostAnnualIncrease}
+            onChange={(v) => calc.setAssumption('fixedCostAnnualIncrease', v)}
+            onBlur={() => calc.markTouched('assumptions.fixedCostAnnualIncrease')}
+            unit="%"
+            error={calc.errorFor('assumptions.fixedCostAnnualIncrease')}
+            grouped
+          />
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-qc-muted">{COPY.advancedAssumptionsNote}</p>
+      </details>
     </div>
   )
 }

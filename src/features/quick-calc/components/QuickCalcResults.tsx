@@ -3,6 +3,7 @@ import { COPY } from '../labels.ts'
 import type { QuickView } from '../viewModel.ts'
 import { BreakdownTable } from './BreakdownTable.tsx'
 import { OutputStrip } from './OutputStrip.tsx'
+import { SankeyBreakdown } from './SankeyBreakdown.tsx'
 import { SimulationTable } from './SimulationTable.tsx'
 import { StackedBar } from './StackedBar.tsx'
 
@@ -73,6 +74,7 @@ export function QuickCalcResults({ view, hasCalculated, liveFlash, copied, onCop
 
           <StackedBar bar={view.bar} endLabel={view.barEndLabel} />
           <BreakdownTable rows={view.breakdown} totalFormatted={view.ticketFormatted} />
+          <SankeyBreakdown bar={view.bar} ticketFormatted={view.ticketFormatted} />
 
           <div className="mb-[18px] mt-6 h-px bg-qc-rule lg:mb-6 lg:mt-[30px]" />
           <OutputStrip outputs={view.outputs} />
