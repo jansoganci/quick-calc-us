@@ -16,7 +16,7 @@ export function ModeRow({
   return (
     <nav
       aria-label={SHELL_COPY.modeNavigation}
-      className="border-b border-qc-rule bg-qc-surface px-[18px] pb-3.5 pt-3 lg:px-[30px]"
+      className="qc-screen-only border-b border-qc-rule bg-qc-surface px-[18px] pb-3.5 pt-3 lg:px-[30px]"
     >
       <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-qc-muted">
         {SHELL_COPY.modeNavigation}

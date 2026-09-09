@@ -2,35 +2,18 @@ import { NumberField } from '../../../components/NumberField.tsx'
 import { DELIVERY_MODES, PROJECTION_HORIZONS, RAMP_UP_PRESETS } from '../../../core/detailed-us/index.ts'
 import type { UsState } from '../../../data/us/salesTaxRates.ts'
 import { cn } from '../../../lib/cn.ts'
-import { formatDecimal } from '../../../lib/number.ts'
+import { mixTotalPercent } from '../errors.ts'
 import { STATE_OPTIONS } from '../../quick-calc/viewModel.ts'
 import type { DetailedCalcApi } from '../hooks/useDetailedCalc.ts'
-import { mixTotalPercent } from '../errors.ts'
-import { COPY, DELIVERY_MODE_LABELS, RAMP_UP_LABELS, SECTION_LABELS, type SectionId } from '../labels.ts'
+import { COPY, DELIVERY_MODE_LABELS, RAMP_UP_LABELS, SECTION_IDS, SECTION_LABELS } from '../labels.ts'
+import { mixTotalDisplay } from '../sectionSummary.ts'
+import { DraftNotice } from './DraftNotice.tsx'
 import { LineRows } from './LineRows.tsx'
 import { MixTable, type MixRow } from './MixTable.tsx'
 import { PositionRows } from './PositionRows.tsx'
 import { ProductRows } from './ProductRows.tsx'
+import { SampleFillControl } from './SampleFillControl.tsx'
 import { SectionFrame } from './SectionFrame.tsx'
-
-const SECTION_ORDER: SectionId[] = [
-  'jurisdiction',
-  'products',
-  'channels',
-  'payments',
-  'delivery',
-  'positions',
-  'owner',
-  'occupancy',
-  'opex',
-  'capex',
-  'assumptions',
-]
-
-function mixTotalDisplay(parts: readonly string[]): string {
-  const total = mixTotalPercent(parts)
-  return total === null ? '—' : `${formatDecimal(total, 2)}%`
-}
 
 export function DetailedForm({ calc }: { calc: DetailedCalcApi }) {
   const { form } = calc
@@ -44,7 +27,7 @@ export function DetailedForm({ calc }: { calc: DetailedCalcApi }) {
         calc.calculate()
       }}
     >
-      {SECTION_ORDER.map((section, index) => (
+      {SECTION_IDS.map((section, index) => (
         <SectionFrame
           key={section}
           section={section}
@@ -55,14 +38,17 @@ export function DetailedForm({ calc }: { calc: DetailedCalcApi }) {
         >
           {section === 'jurisdiction' && <JurisdictionSection calc={calc} />}
           {section === 'products' && (
-            <ProductRows
-              products={form.products}
-              errorFor={calc.errorFor}
-              onFieldChange={calc.setProductField}
-              onBlur={calc.markTouched}
-              onAdd={calc.addProduct}
-              onRemove={calc.removeProduct}
-            />
+            <>
+              <SampleFillControl draftSaved={calc.draftSaved} onLoadSample={calc.loadSample} />
+              <ProductRows
+                products={form.products}
+                errorFor={calc.errorFor}
+                onFieldChange={calc.setProductField}
+                onBlur={calc.markTouched}
+                onAdd={calc.addProduct}
+                onRemove={calc.removeProduct}
+              />
+            </>
           )}
           {section === 'channels' && <ChannelsSection calc={calc} />}
           {section === 'payments' && <PaymentsSection calc={calc} />}
@@ -132,6 +118,8 @@ export function DetailedForm({ calc }: { calc: DetailedCalcApi }) {
       ) : calc.hasCalculated ? (
         <p className="mt-2.5 text-center text-xs text-qc-muted">{COPY.calculateLive}</p>
       ) : null}
+
+      <DraftNotice saved={calc.draftSaved} onReset={calc.resetForm} />
     </form>
   )
 }

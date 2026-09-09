@@ -9,7 +9,7 @@ This is a US-focused financial feasibility calculator for food-and-beverage busi
 - Stack: React 18, Vite, TypeScript, Tailwind CSS, daisyUI.
 - Runtime: client-side calculations, static assets on Cloudflare.
 - There is no database, authentication, or traditional application server.
-- Quick Calculation's engine (`core/quick-us/`) and UI (`features/quick-calc/`) are implemented and tested. Detailed Feasibility's engine (`core/detailed-us/`) and UI (`features/detailed/`) are implemented and tested. Both engines share `data/us/salesTaxRates.ts`. A `ModeRow` switcher (`app/ModeRow.tsx`) lets the page hold both calculators mounted at once (`app/App.tsx`), toggling visibility rather than routing.
+- Quick Calculation's engine (`core/quick-us/`) and UI (`features/quick-calc/`) are implemented and tested. Detailed Feasibility's engine (`core/detailed-us/`) and UI (`features/detailed/`) are implemented and tested, including autosaved drafts (`localStorage`), three custom-SVG charts, and a downloadable PDF report (browser print CSS, no library — see `docs/US_DETAILED_FEASIBILITY_PHASE5_PLAN.md`). Both engines share `data/us/salesTaxRates.ts`. A `ModeRow` switcher (`app/ModeRow.tsx`) lets the page hold both calculators mounted at once (`app/App.tsx`), toggling visibility rather than routing.
 
 ## Sources of truth
 
@@ -39,7 +39,7 @@ src/
   lib/                  generic parsing and formatting helpers (en-US/USD)
 ```
 
-Tests are colocated as `*.test.ts`. `features/detailed/` deliberately excludes PDF export, draft autosave/localStorage, and chart libraries — deferred, not part of this phase's scope.
+Tests are colocated as `*.test.ts`. `features/detailed/` deliberately excludes a chart library (charts are custom SVG), named multi-scenario storage, and JSON export/import — see `docs/US_DETAILED_FEASIBILITY_PHASE5_PLAN.md` §9 for what's deferred and why.
 
 ## Architecture rules
 

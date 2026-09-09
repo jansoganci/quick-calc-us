@@ -1,6 +1,6 @@
 # Detailed Feasibility — Phase 5 Implementation Plan (Persistence, Charts, PDF Report)
 
-**Status: Proposed. Not started — no code has been written from this plan.**
+**Status: Implemented.** All twelve steps in §12 are built: the layout restructure (§7), the three charts (§8.1), the report (§8.2–§8.4), and autosave (§8.5). Verified with `typecheck`, `lint`, `test:run` (218 tests, including new `storage.test.ts`, `reportView.test.ts`, `reportGuards.test.ts`), `build`, and a Playwright pass covering desktop, mobile, draft persistence across a reload, and the print preview. `SampleFillControl` (§11 Q2) was included, per your approval. The disclaimer draft in §8.4 was approved as-is.
 
 **Owns:** how the US Detailed Feasibility screen gets to the same experience the TR sibling app (maliyet.lol) already ships — autosaved drafts, three charts, a downloadable PDF report — plus the summary-pane/mobile-bar/result-table structure that experience depends on. Mechanism choices, file layout, task order, verification.
 

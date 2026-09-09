@@ -54,6 +54,12 @@ const QC_COLORS = {
   'bar-pos': '#A8AEB6',
   'bar-investment-recovery': '#CFD3D8',
   'bar-remaining': '#1D3A5F',
+
+  // Detailed's reconciliation bar needs nine stops where Quick's needs eight, so
+  // two tones join the same monotone ramp — one quantity divided, not a hue
+  // scale (docs/US_DETAILED_FEASIBILITY_PHASE5_PLAN.md §7.2).
+  'bar-channel': '#4A515C',
+  'bar-owner': '#7C838C',
 } as const
 
 /** Focus and error rings, per FRONTEND_IMPLEMENTATION_SPEC.md §1. */
@@ -77,6 +83,14 @@ export default {
   theme: {
     extend: {
       colors: { qc: themeColors },
+      /**
+       * `lg` also matches print, so the desktop-width layout serves as the
+       * printed report layout with no per-component `print:` duplication
+       * (docs/US_DETAILED_FEASIBILITY_PHASE5_PLAN.md §7.4). A `raw` screen
+       * generates no `max-lg:` variant — nothing in this repo uses one;
+       * `reportGuards.test.ts` holds the line.
+       */
+      screens: { lg: { raw: 'screen and (min-width: 1024px), print' } },
       fontFamily: {
         sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],

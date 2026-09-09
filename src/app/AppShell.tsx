@@ -29,7 +29,7 @@ export function AppShell({ mode, onModeChange, children }: AppShellProps) {
 
 function AppHeader() {
   return (
-    <header className="flex h-[52px] items-center gap-2.5 border-b border-qc-rule bg-qc-surface px-[18px] lg:sticky lg:top-0 lg:z-10 lg:h-14 lg:px-[30px]">
+    <header className="qc-screen-only flex h-[52px] items-center gap-2.5 border-b border-qc-rule bg-qc-surface px-[18px] lg:sticky lg:top-0 lg:z-10 lg:h-14 lg:px-[30px]">
       <span className="text-sm font-semibold tracking-[-0.005em] text-qc-ink lg:text-[15px]">
         {SHELL_COPY.productName}
       </span>
@@ -40,7 +40,7 @@ function AppHeader() {
 
 function AppFooter() {
   return (
-    <footer className="border-t border-qc-rule px-[18px] py-[18px] text-xs text-qc-muted lg:px-[30px]">
+    <footer className="qc-screen-only border-t border-qc-rule px-[18px] py-[18px] text-xs text-qc-muted lg:px-[30px]">
       <div className="flex flex-col gap-[5px] lg:flex-row lg:items-baseline lg:justify-between lg:gap-6">
         <span>{SHELL_COPY.footerNature}</span>
         <span className="font-mono text-[11px] text-qc-subtle">

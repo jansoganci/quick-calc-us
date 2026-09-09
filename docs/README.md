@@ -26,7 +26,7 @@ If two documents appear to disagree, use the authority order in [`CLAUDE.md`](..
 
 | Document | Owns | Status |
 | --- | --- | --- |
-| [`US_DETAILED_FEASIBILITY_PHASE5_PLAN.md`](./US_DETAILED_FEASIBILITY_PHASE5_PLAN.md) | Roadmap for porting the TR sibling app's autosave, charts and PDF report to the US Detailed Feasibility screen — mechanism, file layout, task order | Proposed, not started |
+| [`US_DETAILED_FEASIBILITY_PHASE5_PLAN.md`](./US_DETAILED_FEASIBILITY_PHASE5_PLAN.md) | Roadmap for porting the TR sibling app's autosave, charts and PDF report to the US Detailed Feasibility screen — mechanism, file layout, task order | Implemented |
 
 ---
 

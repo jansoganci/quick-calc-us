@@ -345,3 +345,98 @@
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Print — the Detailed Feasibility PDF report.
+
+   `lg` matches print too (tailwind.config.ts), so the desktop-width layout is
+   the printed layout; `.qc-print-only` / `.qc-screen-only` handle the few
+   elements that must appear in exactly one medium regardless of width.
+   --------------------------------------------------------------------------- */
+
+@media screen {
+  .qc-print-only {
+    display: none !important;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 14mm 12mm;
+}
+
+@media print {
+  .qc-screen-only {
+    display: none !important;
+  }
+
+  /* `!important` because the elements these mark are `hidden` on screen, and a
+     print-only block must win over that whatever order Tailwind emits. */
+  .qc-print-only {
+    display: block !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  /* A print started mid-transition would otherwise capture the faded frame. */
+  .qc-enter,
+  .qc-live {
+    animation: none !important;
+  }
+
+  /* The masthead and the summary pane are sticky, the mobile bar is fixed; on
+     paper each would either repeat or float over the content. */
+  [class*='sticky'],
+  [class*='fixed'] {
+    position: static !important;
+  }
+
+  /* Browsers drop CSS backgrounds when printing unless a node opts in. This
+     is scoped to the reconciliation bar's segments only — never the page. */
+  .qc-print-ink {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .qc-report-cover {
+    break-after: page;
+  }
+
+  .qc-report-appendix {
+    break-before: page;
+  }
+
+  /* Sections that fit a page are kept whole; the projection and the appendix
+     are allowed to break, and their tables carry the row/header rules below. */
+  .qc-report-section {
+    break-inside: avoid;
+  }
+
+  .qc-report-table thead {
+    display: table-header-group;
+  }
+
+  .qc-report-table tr,
+  .qc-report-row {
+    break-inside: avoid;
+  }
+
+  svg {
+    break-inside: avoid;
+  }
+}

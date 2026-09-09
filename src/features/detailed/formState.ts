@@ -69,6 +69,27 @@ function makeId(prefix: string): string {
   return `${prefix}-${nextId}`
 }
 
+/**
+ * Advances the id counter past every id already in a restored form, so a
+ * freshly minted row (e.g. `product-2`) never collides with a restored one
+ * sharing the same id — which would otherwise give two rows the same React
+ * key. Called once, right after a draft is loaded from storage.
+ */
+export function syncIdCounter(form: DetailedFormState): void {
+  const ids = [
+    ...form.products.map((row) => row.id),
+    ...form.positions.map((row) => row.id),
+    ...form.opexLines.map((row) => row.id),
+    ...form.capexItems.map((row) => row.id),
+  ]
+  for (const id of ids) {
+    const match = /-(\d+)$/.exec(id)
+    if (match?.[1] === undefined) continue
+    const value = Number(match[1])
+    if (value > nextId) nextId = value
+  }
+}
+
 /** A 0-1 rate rendered as the percentage string the field shows. */
 export function rateToPercentInput(rate: number): string {
   return formatDecimal(rate * 100, 2)
@@ -124,6 +145,54 @@ export function initialForm(): DetailedFormState {
     occupancy: { monthlyRent: '', monthlyCAM: '' },
     opexLines: [],
     capexItems: [],
+    assumptions: {
+      projectionHorizonMonths: DETAILED_US_DEFAULTS.projectionHorizonMonths,
+      rampUpPreset: DETAILED_US_DEFAULTS.rampUpPreset,
+      scenarioVolumeDeltas: {
+        bad: rateToPercentInput(DETAILED_US_DEFAULTS.scenarioVolumeDeltas.bad),
+        base: rateToPercentInput(DETAILED_US_DEFAULTS.scenarioVolumeDeltas.base),
+        good: rateToPercentInput(DETAILED_US_DEFAULTS.scenarioVolumeDeltas.good),
+      },
+      salesPriceAnnualIncrease: rateToPercentInput(DETAILED_US_DEFAULTS.salesPriceAnnualIncrease),
+      productCogsAnnualIncrease: rateToPercentInput(DETAILED_US_DEFAULTS.productCogsAnnualIncrease),
+      fixedCostAnnualIncrease: rateToPercentInput(DETAILED_US_DEFAULTS.fixedCostAnnualIncrease),
+    },
+  }
+}
+
+/**
+ * A realistic filled example — a small California coffee shop — for the
+ * "Fill with example" onboarding control. Every figure is a plausible
+ * planning number, not a golden vector: nothing here is asserted against by
+ * a test.
+ */
+export function sampleCafeForm(): DetailedFormState {
+  return {
+    usState: 'CA',
+    salesTaxRate: '8.99',
+    products: [
+      { id: makeId('product'), name: 'Latte', normalPrice: '5.50', onlinePrice: '6.15', dailyQuantity: '220', unitProductCost: '1.10' },
+      { id: makeId('product'), name: 'Breakfast Sandwich', normalPrice: '6.50', onlinePrice: '7.25', dailyQuantity: '110', unitProductCost: '2.80' },
+    ],
+    channelMix: { dineIn: '50.00', takeaway: '20.00', delivery: '30.00' },
+    packaging: { takeawayPerOrder: '0.35', deliveryPerOrder: '0.75' },
+    paymentMix: { cash: '15.00', card: '85.00' },
+    posCommissionRate: '3.50',
+    delivery: { mode: 'platformOnly', platformFeeRate: '0.00', ownCourierCostPerDeliveryOrder: '3.50' },
+    positions: [
+      { id: makeId('position'), name: 'Barista', headcount: '2', monthlyCostPerPerson: '3200' },
+      { id: makeId('position'), name: 'Shift lead', headcount: '1', monthlyCostPerPerson: '3800' },
+    ],
+    owner: { monthlyDraw: '4000', benefitsAllowance: '500' },
+    occupancy: { monthlyRent: '4500', monthlyCAM: '350' },
+    opexLines: [
+      { id: makeId('opex'), name: 'Utilities', amount: '450' },
+      { id: makeId('opex'), name: 'Software & POS fees', amount: '120' },
+    ],
+    capexItems: [
+      { id: makeId('capex'), name: 'Espresso machine', amount: '18000' },
+      { id: makeId('capex'), name: 'Buildout & furniture', amount: '35000' },
+    ],
     assumptions: {
       projectionHorizonMonths: DETAILED_US_DEFAULTS.projectionHorizonMonths,
       rampUpPreset: DETAILED_US_DEFAULTS.rampUpPreset,

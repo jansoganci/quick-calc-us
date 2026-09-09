@@ -7,26 +7,27 @@ import {
   emptyPosition,
   emptyProduct,
   initialForm,
+  sampleCafeForm,
   type DetailedFormState,
   type LineRow,
   type PositionRow,
   type ProductRow,
 } from '../formState.ts'
 import type { SectionId } from '../labels.ts'
-import type { DetailedView } from '../resultView.ts'
+import type { DetailedView } from '../viewModel.ts'
 import { evaluateDetailed } from '../viewModel.ts'
+import { createDraftSaveQueue, registerDraftLifecycleFlush } from './draftAutosave.ts'
+import { clearDraft, loadInitialDraft, writeDraft } from './draftStorage.ts'
 
 /**
  * Form state and the V6 gate: the first calculation happens only on
  * Calculate, and every valid change after it updates the result live — same
  * pattern as `useQuickCalc`, extended with row mutators for the array
- * sections.
- *
- * No draft autosave, no sample loader, no report metadata: deferred out of
- * Phase 4 scope (see the Detailed UI plan) along with PDF export and charts.
+ * sections and the autosave/report-name state Phase 5 adds.
  */
 export function useDetailedCalc() {
-  const [form, setForm] = useState<DetailedFormState>(initialForm)
+  const [initialDraft] = useState(loadInitialDraft)
+  const [form, setForm] = useState<DetailedFormState>(initialDraft.form)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [submitted, setSubmitted] = useState(false)
   const [hasCalculated, setHasCalculated] = useState(false)
@@ -34,8 +35,28 @@ export function useDetailedCalc() {
   const [liveFlash, setLiveFlash] = useState(false)
   const [copied, setCopied] = useState(false)
   const [openSection, setOpenSection] = useState<SectionId | null>('jurisdiction')
+  const [draftSaved, setDraftSaved] = useState(initialDraft.hasStoredDraft)
+  /**
+   * Report metadata, not a financial input: it titles the report and names
+   * the saved file, and it is deliberately NOT part of `DetailedFormState`,
+   * so it cannot reach `toInput.ts`, validation or the engine even by
+   * accident. The ref mirrors it for the autosave writer, which runs outside
+   * React's render.
+   */
+  const [businessName, setBusinessNameState] = useState(initialDraft.businessName)
+  const businessNameRef = useRef(initialDraft.businessName)
   const resultsRef = useRef<HTMLDivElement>(null)
   const previousViewKeyRef = useRef<string | null>(null)
+  const draftSaveQueueRef = useRef<ReturnType<typeof createDraftSaveQueue> | null>(null)
+  if (draftSaveQueueRef.current === null) {
+    draftSaveQueueRef.current = createDraftSaveQueue(
+      initialDraft.form,
+      (form) => writeDraft({ form, businessName: businessNameRef.current }),
+      () => setDraftSaved(true),
+    )
+  }
+  const draftSaveQueue = draftSaveQueueRef.current
+  draftSaveQueue.updateLatest(form)
 
   const evaluation = useMemo(() => evaluateDetailed(form), [form])
   const canSubmit = evaluation.ok
@@ -52,6 +73,23 @@ export function useDetailedCalc() {
     const timer = window.setTimeout(() => setLiveFlash(false), 180)
     return () => window.clearTimeout(timer)
   }, [hasCalculated, evaluation])
+
+  /**
+   * Autosave, debounced so a burst of typing writes once. Watches `form`
+   * rather than hooking into `update()`, so any mutator added later is
+   * covered without being remembered.
+   */
+  useEffect(() => {
+    draftSaveQueue.schedule()
+  }, [draftSaveQueue, form])
+
+  useEffect(() => {
+    const unregister = registerDraftLifecycleFlush(draftSaveQueue)
+    return () => {
+      unregister()
+      draftSaveQueue.dispose()
+    }
+  }, [draftSaveQueue])
 
   const markTouched = useCallback((path: string) => {
     setTouched((current) => ({ ...current, [path]: true }))
@@ -72,8 +110,37 @@ export function useDetailedCalc() {
     setForm((current) => mutate(current))
   }
 
+  /**
+   * Back to a blank form with no stored draft. Autosave means a reload no
+   * longer clears the page, so this is the only way to start a second
+   * business. The result clears with the inputs — a calculated result left
+   * beside an empty form would break V6.
+   */
   function resetForm() {
-    setForm(initialForm())
+    const fresh = initialForm()
+    draftSaveQueue.reset(fresh)
+    clearDraft()
+    businessNameRef.current = ''
+    setBusinessNameState('')
+    setForm(fresh)
+    setTouched({})
+    setSubmitted(false)
+    setHasCalculated(false)
+    setView(null)
+    setDraftSaved(false)
+    setOpenSection('jurisdiction')
+    previousViewKeyRef.current = null
+  }
+
+  /**
+   * Replaces the form with a realistic filled example. Same reset of
+   * touched/submitted/view as `resetForm` — new inputs need a fresh
+   * Calculate (V6) — but not a `clearDraft()`: the sample becomes the new
+   * draft through the same debounced autosave every other edit goes
+   * through.
+   */
+  function loadSample() {
+    setForm(sampleCafeForm())
     setTouched({})
     setSubmitted(false)
     setHasCalculated(false)
@@ -82,27 +149,36 @@ export function useDetailedCalc() {
     previousViewKeyRef.current = null
   }
 
+  /** Committed when a report is generated, not on every keystroke in the dialog. */
+  function setBusinessName(next: string) {
+    businessNameRef.current = next
+    setBusinessNameState(next)
+    if (writeDraft({ form, businessName: next })) setDraftSaved(true)
+  }
+
   const api = {
     form,
     evaluation,
     view,
+    businessName,
+    setBusinessName,
     hasCalculated,
     canSubmit,
     liveFlash,
     copied,
     openSection,
+    draftSaved,
     resultsRef,
     errorFor,
     errorSections,
     markTouched,
     resetForm,
+    loadSample,
 
     setOpenSection: (section: SectionId | null) => setOpenSection(section),
-    toggleSection: (section: SectionId) =>
-      setOpenSection((current) => (current === section ? null : section)),
+    toggleSection: (section: SectionId) => setOpenSection((current) => (current === section ? null : section)),
 
-    setUsState: (value: UsState) =>
-      update((draft) => ({ ...draft, usState: value, salesTaxRate: stateTaxRatePercent(value) })),
+    setUsState: (value: UsState) => update((draft) => ({ ...draft, usState: value, salesTaxRate: stateTaxRatePercent(value) })),
     setSalesTaxRate: (value: string) => update((draft) => ({ ...draft, salesTaxRate: value })),
 
     setProductField: (index: number, field: keyof Omit<ProductRow, 'id'>, value: string) =>
@@ -111,8 +187,7 @@ export function useDetailedCalc() {
         products: draft.products.map((row, at) => (at === index ? { ...row, [field]: value } : row)),
       })),
     addProduct: () => update((draft) => ({ ...draft, products: [...draft.products, emptyProduct()] })),
-    removeProduct: (index: number) =>
-      update((draft) => ({ ...draft, products: draft.products.filter((_, at) => at !== index) })),
+    removeProduct: (index: number) => update((draft) => ({ ...draft, products: draft.products.filter((_, at) => at !== index) })),
 
     setPositionField: (index: number, field: keyof Omit<PositionRow, 'id'>, value: string) =>
       update((draft) => ({
@@ -120,24 +195,15 @@ export function useDetailedCalc() {
         positions: draft.positions.map((row, at) => (at === index ? { ...row, [field]: value } : row)),
       })),
     addPosition: () => update((draft) => ({ ...draft, positions: [...draft.positions, emptyPosition()] })),
-    removePosition: (index: number) =>
-      update((draft) => ({ ...draft, positions: draft.positions.filter((_, at) => at !== index) })),
+    removePosition: (index: number) => update((draft) => ({ ...draft, positions: draft.positions.filter((_, at) => at !== index) })),
 
-    setLineField: (
-      collection: 'opexLines' | 'capexItems',
-      index: number,
-      field: keyof Omit<LineRow, 'id'>,
-      value: string,
-    ) =>
+    setLineField: (collection: 'opexLines' | 'capexItems', index: number, field: keyof Omit<LineRow, 'id'>, value: string) =>
       update((draft) => ({
         ...draft,
         [collection]: draft[collection].map((row, at) => (at === index ? { ...row, [field]: value } : row)),
       })),
     addLine: (collection: 'opexLines' | 'capexItems') =>
-      update((draft) => ({
-        ...draft,
-        [collection]: [...draft[collection], emptyLine(collection === 'opexLines' ? 'opex' : 'capex')],
-      })),
+      update((draft) => ({ ...draft, [collection]: [...draft[collection], emptyLine(collection === 'opexLines' ? 'opex' : 'capex')] })),
     removeLine: (collection: 'opexLines' | 'capexItems', index: number) =>
       update((draft) => ({ ...draft, [collection]: draft[collection].filter((_, at) => at !== index) })),
 
@@ -149,20 +215,16 @@ export function useDetailedCalc() {
       update((draft) => ({ ...draft, paymentMix: { ...draft.paymentMix, [method]: value } })),
     setPosCommissionRate: (value: string) => update((draft) => ({ ...draft, posCommissionRate: value })),
 
-    setDeliveryMode: (mode: DeliveryMode) =>
-      update((draft) => ({ ...draft, delivery: { ...draft.delivery, mode } })),
+    setDeliveryMode: (mode: DeliveryMode) => update((draft) => ({ ...draft, delivery: { ...draft.delivery, mode } })),
     setDeliveryField: (field: 'platformFeeRate' | 'ownCourierCostPerDeliveryOrder', value: string) =>
       update((draft) => ({ ...draft, delivery: { ...draft.delivery, [field]: value } })),
 
-    setOwnerField: (field: keyof DetailedFormState['owner'], value: string) =>
-      update((draft) => ({ ...draft, owner: { ...draft.owner, [field]: value } })),
+    setOwnerField: (field: keyof DetailedFormState['owner'], value: string) => update((draft) => ({ ...draft, owner: { ...draft.owner, [field]: value } })),
     setOccupancyField: (field: keyof DetailedFormState['occupancy'], value: string) =>
       update((draft) => ({ ...draft, occupancy: { ...draft.occupancy, [field]: value } })),
 
-    setAssumption: (
-      field: 'salesPriceAnnualIncrease' | 'productCogsAnnualIncrease' | 'fixedCostAnnualIncrease',
-      value: string,
-    ) => update((draft) => ({ ...draft, assumptions: { ...draft.assumptions, [field]: value } })),
+    setAssumption: (field: 'salesPriceAnnualIncrease' | 'productCogsAnnualIncrease' | 'fixedCostAnnualIncrease', value: string) =>
+      update((draft) => ({ ...draft, assumptions: { ...draft.assumptions, [field]: value } })),
     setHorizon: (months: DetailedFormState['assumptions']['projectionHorizonMonths']) =>
       update((draft) => ({ ...draft, assumptions: { ...draft.assumptions, projectionHorizonMonths: months } })),
     setRampUp: (preset: DetailedFormState['assumptions']['rampUpPreset']) =>
@@ -170,10 +232,7 @@ export function useDetailedCalc() {
     setScenarioDelta: (scenario: 'bad' | 'base' | 'good', value: string) =>
       update((draft) => ({
         ...draft,
-        assumptions: {
-          ...draft.assumptions,
-          scenarioVolumeDeltas: { ...draft.assumptions.scenarioVolumeDeltas, [scenario]: value },
-        },
+        assumptions: { ...draft.assumptions, scenarioVolumeDeltas: { ...draft.assumptions.scenarioVolumeDeltas, [scenario]: value } },
       })),
 
     calculate: () => {
