@@ -427,8 +427,21 @@
     widows: 3;
   }
 
+  /* A fixed-height flex column for exactly one page (A4 minus the @page
+     margin), so `.qc-report-cover-footer`'s `margin-top: auto` pins the
+     disclaimer and colophon to the foot of the page instead of landing
+     wherever the content above happens to end. `!important` because
+     `.qc-print-only` already sets `display: block !important` on this same
+     element. */
   .qc-report-cover {
+    display: flex !important;
+    flex-direction: column;
+    min-height: calc(297mm - 28mm);
     break-after: page;
+  }
+
+  .qc-report-cover-footer {
+    margin-top: auto;
   }
 
   .qc-report-appendix {

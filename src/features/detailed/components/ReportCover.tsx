@@ -70,7 +70,11 @@ export function ReportCover({ view, businessName }: { view: DetailedView; busine
         </div>
       ) : null}
 
-      <div className="mt-10 border-t border-qc-rule pt-4">
+      {/* `qc-report-cover-footer`: print CSS pins this block to the bottom of
+          the page (the cover is a fixed-height flex column on paper), so the
+          disclaimer and colophon read as the foot of a printed page rather
+          than landing wherever the content above happens to end. */}
+      <div className="qc-report-cover-footer mt-10 border-t border-qc-rule pt-4">
         <p className="m-0 max-w-[620px] text-xs leading-relaxed text-qc-muted">{REPORT_COPY.disclaimerShort}</p>
         <div className="mt-3.5 flex items-baseline justify-between">
           <span className="font-mono text-[10px] text-qc-subtle">{REPORT_COPY.runningHead(businessName)}</span>
