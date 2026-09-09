@@ -22,8 +22,9 @@ UI, USD, `en-US` number formatting.
 | Architecture and project structure | Approved — `docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md` |
 | Scaffold (Phase 0) | Done — Vite/React/TS/Tailwind/daisyUI, Cloudflare Workers + Static Assets, app shell |
 | Quick Calculation engine (Phase 1) | Done — `core/quick-us/`, `data/us/salesTaxRates.ts`, golden vector + edge cases in tests |
-| Detailed Feasibility engine (Phase 3) | Not started |
-| UI, Quick and Detailed (Phase 2 / 4) | Not started |
+| Quick Calculation UI (Phase 2) | Done — `features/quick-calc/` |
+| Detailed Feasibility engine (Phase 3) | Done — `core/detailed-us/`, golden vector + edge cases in tests |
+| Detailed Feasibility UI (Phase 4) | Not started |
 
 Documentation index: [`docs/README.md`](docs/README.md).
 
@@ -45,12 +46,12 @@ Full detail and the reasoning behind each choice: `docs/TECH_STACK_AND_CONSTRAIN
 
 ```
 src/
-  core/quick-us/  Quick Calculation engine — pure TypeScript, no React
-  core/           Detailed Feasibility engine lives here too, not built yet
-  features/       product screens, forms, composition (not built yet)
-  components/     reusable, domain-neutral UI primitives
-  lib/            generic helpers (formatting, predicates)
-  data/us/        salesTaxRates.ts — the 50-state + DC table, single source
+  core/quick-us/     Quick Calculation engine — pure TypeScript, no React
+  core/detailed-us/  Detailed Feasibility engine — same rule, no UI yet
+  features/quick-calc/  Quick Calculation screen, form state, view model
+  components/        reusable, domain-neutral UI primitives
+  lib/               generic helpers (formatting, predicates)
+  data/us/           salesTaxRates.ts — the 50-state + DC table, single source
 ```
 
 The one boundary that matters: **financial logic lives in `core/`, never in React components.**

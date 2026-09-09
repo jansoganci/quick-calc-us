@@ -12,7 +12,7 @@ If two documents appear to disagree, use the authority order in [`CLAUDE.md`](..
 | --- | --- |
 | [`US_PRODUCT_SCOPE.md`](./US_PRODUCT_SCOPE.md) | Quick Calculation financial spec — inputs, formulas, outputs, the 50-state + DC sales-tax table (v0.2, owner locks US-1…US-10) |
 | [`US_DETAILED_FEASIBILITY_SCOPE.md`](./US_DETAILED_FEASIBILITY_SCOPE.md) | Detailed Feasibility scope and locked decisions (v0.1, owner locks UD-1…UD-4) |
-| [`US_DETAILED_FINANCIAL_SPEC.md`](./US_DETAILED_FINANCIAL_SPEC.md) | Detailed Feasibility formula contract — inputs, defaults, limits, formulas, edge states, golden vector (v0.1) |
+| [`US_DETAILED_FINANCIAL_SPEC.md`](./US_DETAILED_FINANCIAL_SPEC.md) | Detailed Feasibility formula contract — inputs, defaults, limits, formulas, edge states, golden vector (v0.2, implemented in `core/detailed-us/`) |
 | [`TECH_STACK_AND_CONSTRAINTS.md`](./TECH_STACK_AND_CONSTRAINTS.md) | Stack, runtime, deployment, persistence, technical exclusions |
 | [`APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`](./APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md) | Folder structure, layer boundaries, dependency direction, reuse rules, naming |
 | [`DESIGN_DIRECTION.md`](./DESIGN_DIRECTION.md) | Locked visual & UX direction, inherited from the TR sibling app |

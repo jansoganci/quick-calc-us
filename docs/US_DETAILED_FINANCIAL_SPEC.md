@@ -1,7 +1,7 @@
 # US Detailed Feasibility — Financial Specification
 
-**Version:** v0.1
-**Status:** Formula contract — inputs, defaults, formulas, outputs, edge states, golden vector. This is the specification the engine implements exactly; it is **not** an implementation order. No US Detailed engine or UI may be coded from this document until explicitly requested.
+**Version:** v0.2
+**Status:** Formula contract — inputs, defaults, formulas, outputs, edge states, golden vector. The engine (`core/detailed-us/`) implements this document exactly. No Detailed UI may be built from it until explicitly requested.
 **Companion documents:** `US_DETAILED_FEASIBILITY_SCOPE.md` (scope, owner locks UD-1…UD-4 — this document does not re-litigate them), `US_PRODUCT_SCOPE.md` (Quick — shares `data/us/salesTaxRates.ts` and the pre-tax revenue principle with Detailed, nothing else).
 **Currency:** USD · **Country:** United States · **Preset:** Coffee Shop / Cafe
 
@@ -595,11 +595,17 @@ MonthResult = {
   monthlyFixedCost: number
   monthlyOperatingResult: number
   byChannel: { dineIn: ChannelLine, takeaway: ChannelLine, delivery: ChannelLine }
+  byProduct: ProductLine[]            // ordered as input.products — see §9
 }
 
 ChannelLine = { units, grossCustomerSales, netRevenue,
                 productCogs, channelVariableCost, paymentPlatformFee, contribution }
+
+ProductLine = { productId, name, units, grossCustomerSales, netRevenue,
+                productCogs, channelVariableCost, paymentPlatformFee, contribution }
 ```
+
+**Corrected.** This previously omitted `byProduct`/`ProductLine`, even though §9 already committed to per-product contribution as part of what Detailed provides. The engine implements it (same six figures as `ChannelLine`, summed across channels instead of across products, ordered as `input.products`) — this section now matches that rather than silently diverging from it.
 
 No `rentPaidToLandlord` / `rentWithholdingTax` fields — they don't exist in this product.
 
@@ -753,6 +759,13 @@ Note: delivery lines always show `tax = 0` and `gross = net` — that's UD-1, no
 | `monthlyFixedCost` | 24 600 |
 | **`monthlyOperatingResult`** | **15 007.937271** |
 
+**Base stabilized month, `byProduct`** (summed across channels — §9, DF-84):
+
+| Product | Units | Gross | Net | COGS | Channel var. | Fee | Contribution |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Latte | 6 600 | 40 564.359 | 38 280 | 7 260 | 4 554 | 2 754.407181 | 23 711.59282 |
+| Breakfast Sandwich | 3 300 | 31 300.1865 | 29 535 | 9 240 | 2 277 | 2 121.655548 | 15 896.344452 |
+
 **Break-even** (scenario-invariant):
 
 ```
@@ -804,6 +817,7 @@ Tier 1 must pass before any Detailed US UI work begins.
 | 1 | T14 | Delivery mode requirement | Required at `channelMix.delivery > 0`; not required and inert at a 0 share; every figure identical across both modes at a 0 share |
 | 2 | T15 | Approved zero defaults | Empty packaging resolves to 0; empty `monthlyCostPerPerson` resolves to 0, does not block, and contributes no payroll; the warn condition selects `headcount > 0` positions only |
 | 3 | T16 | Structural guards | I2, I3, I4, I5, I7, I12; banned terminology absent from `core/detailed-us/`; result carries nothing beyond §14 |
+| 1 | T17 | Per-product contribution | `byProduct` matches §16.2's table, ordered as `input.products`, summed across channels with the same six figures as `ChannelLine` |
 
 Tests are colocated as `*.test.ts` under `src/core/detailed-us/`. No UI test suite.
 
@@ -813,4 +827,5 @@ Tests are colocated as `*.test.ts` under `src/core/detailed-us/`. No UI test sui
 
 | Version | Change |
 | --- | --- |
+| v0.2 | Engine implemented in `core/detailed-us/` (194 tests passing). Corrected §14.3: `MonthResult` was missing `byProduct`/`ProductLine` even though §9 already committed to per-product contribution — the engine implements it (DF-84 pattern) and this section now matches. Golden vector's `byProduct` totals added to §16.2, verified against the same script as the rest of the table. |
 | v0.1 | Initial specification — structural port of the TR Detailed Financial Specification with US-1 (pre-tax revenue direction reversed), UD-1 (delivery has no merchant sales tax), UD-2 (one fully-loaded cost per position), UD-3 (two-field owner section), UD-4 (0% platform fee default) applied. Rent withholding, meal-card payment method, and TR's dual POS default removed rather than zeroed. Currency-denominated limits rescaled for USD as a first pass (US-7, not yet researched). Golden vector computed and verified with a throwaway script, not by hand. |
