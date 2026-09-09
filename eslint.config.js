@@ -43,7 +43,13 @@ export default tseslint.config(
           patterns: [
             { group: ['**/features/**'], message: 'core must not import the feature layer.' },
             { group: ['**/components/**'], message: 'core must not import UI components.' },
-            { group: ['**/data/**'], message: 'core must not import benchmark data.' },
+            {
+              group: ['**/data/benchmarks/**'],
+              message: 'core must not import benchmark/plausibility data.',
+            },
+            // data/us/salesTaxRates.ts is a deliberate exception: it's an
+            // authoritative business fact the engine needs (US_PRODUCT_SCOPE
+            // §8), not a benchmark or plausibility range.
           ],
         },
       ],

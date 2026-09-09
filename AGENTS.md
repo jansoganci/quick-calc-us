@@ -9,7 +9,7 @@ This is a US-focused financial feasibility calculator for food-and-beverage busi
 - Stack: React 18, Vite, TypeScript, Tailwind CSS, daisyUI.
 - Runtime: client-side calculations, static assets on Cloudflare.
 - There is no database, authentication, or traditional application server.
-- Nothing is implemented yet beyond the Phase 0 scaffold (app shell, no engine, no form). Quick Calculation only — no Detailed Feasibility engine in this repo.
+- Quick Calculation's engine (`core/quick-us/`) and the shared `data/us/salesTaxRates.ts` table are implemented and tested. No UI form exists yet for either mode; no Detailed Feasibility engine exists yet.
 
 ## Sources of truth
 
@@ -30,11 +30,13 @@ Anything marked `LOCKED` or `APPROVED` is settled. Do not redesign, optimize, or
 ```text
 src/
   app/                  root composition, error boundary, global CSS
+  core/quick-us/        Quick Calculation engine — implemented and tested
+  data/us/              salesTaxRates.ts — the 50-state + DC table, single source
   components/           reusable domain-neutral UI primitives
   lib/                  generic parsing and formatting helpers (currently TR-locale; rework for en-US/USD when the UI is built)
 ```
 
-`core/quick-us/` (the engine) and `data/us/salesTaxRates.ts` are created only once Phase 1 is authorised (`docs/US_PRODUCT_SCOPE.md` §8). `features/` likewise waits for Phase 2. Tests are colocated as `*.test.ts`.
+`core/detailed-us/` (the Detailed engine) is created only once that phase is authorised. `features/` likewise waits for the UI phase. Tests are colocated as `*.test.ts`.
 
 ## Architecture rules
 
