@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import { cn } from '../lib/cn.ts'
-import { caretAfterFormat, formatTypedTurkishNumber } from '../lib/number.ts'
+import { caretAfterFormat, formatTypedNumber } from '../lib/number.ts'
 import { InfoTooltip } from './InfoTooltip.tsx'
 
 type NumberFieldProps = {
@@ -62,7 +62,7 @@ export function NumberField({
   }, [value])
 
   function applyGrouped(nextRaw: string, caret: number | null) {
-    const formatted = formatTypedTurkishNumber(nextRaw, { maxFractionDigits })
+    const formatted = formatTypedNumber(nextRaw, { maxFractionDigits })
     if (caret !== null) {
       caretRef.current = caretAfterFormat(nextRaw, caret, formatted)
     }

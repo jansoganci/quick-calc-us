@@ -1,10 +1,10 @@
-/** Plain Turkish number formatting for non-money values: counts, days, months, periods. */
+/** Plain number formatting for non-money values: counts, days, months, periods. */
 export function formatCount(value: number): string {
-  return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(value)
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value)
 }
 
 export function formatDecimal(value: number, maximumFractionDigits: number): string {
-  return new Intl.NumberFormat('tr-TR', { maximumFractionDigits }).format(value)
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits }).format(value)
 }
 
 export type ParsedNumber =
@@ -12,10 +12,16 @@ export type ParsedNumber =
   | { status: 'invalid' }
   | { status: 'ok'; value: number }
 
-const THOUSANDS_ONLY = /^\d{1,3}(\.\d{3})+$/
-const ENGLISH_DECIMAL = /^(\d+)\.(\d{1,2})$/
+/** A pure grouped integer using US thousands commas, e.g. `1,500,000`. */
+const THOUSANDS_ONLY = /^\d{1,3}(,\d{3})+$/
 
-export function parseTurkishNumber(raw: string): ParsedNumber {
+/**
+ * US number format only: `.` is the decimal separator, `,` is the thousands
+ * separator. Paste of `1500000`, `1,500,000`, or `1500000.50` all parse to
+ * the expected value; JS's own `.`-decimal convention means a plain typed
+ * decimal like `9.50` already needs no translation.
+ */
+export function parseNumber(raw: string): ParsedNumber {
   const trimmed = raw.trim()
   if (trimmed === '') return { status: 'empty' }
 
@@ -30,10 +36,8 @@ export function parseTurkishNumber(raw: string): ParsedNumber {
   if (unsigned === '') return { status: 'invalid' }
 
   let normalized: string
-  if (unsigned.includes(',')) {
-    normalized = unsigned.replaceAll('.', '').replace(',', '.')
-  } else if (THOUSANDS_ONLY.test(unsigned)) {
-    normalized = unsigned.replaceAll('.', '')
+  if (unsigned.includes('.') || THOUSANDS_ONLY.test(unsigned)) {
+    normalized = unsigned.replaceAll(',', '')
   } else {
     normalized = unsigned
   }
@@ -54,20 +58,20 @@ function formatIntegerDigits(digits: string): string {
   const stripped = stripLeadingZeros(digits)
   const numeric = Number(stripped)
   if (Number.isSafeInteger(numeric)) {
-    return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(numeric)
+    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(numeric)
   }
   const parts: string[] = []
   for (let index = stripped.length; index > 0; index -= 3) {
     parts.unshift(stripped.slice(Math.max(0, index - 3), index))
   }
-  return parts.join('.')
+  return parts.join(',')
 }
 
 /**
  * Presentation grouping for a value the user is still typing.
- * Does not round. Incomplete trailing commas are kept.
+ * Does not round. An incomplete trailing decimal point is kept.
  */
-export function formatTypedTurkishNumber(
+export function formatTypedNumber(
   raw: string,
   options: { maxFractionDigits: number },
 ): string {
@@ -90,11 +94,11 @@ export function formatTypedTurkishNumber(
   let fracDigits: string | null = null
   let trailingDecimal = false
 
-  if (compact.includes(',')) {
-    const commaIndex = compact.indexOf(',')
-    const intPart = compact.slice(0, commaIndex)
-    const fracPart = compact.slice(commaIndex + 1)
-    if (fracPart.includes(',')) return raw
+  if (compact.includes('.')) {
+    const dotIndex = compact.indexOf('.')
+    const intPart = compact.slice(0, dotIndex)
+    const fracPart = compact.slice(dotIndex + 1)
+    if (fracPart.includes('.')) return raw
     intDigits = intPart.replace(/\D/g, '')
     const fracClean = fracPart.replace(/\D/g, '')
     trailingDecimal = fracClean.length === 0
@@ -105,13 +109,7 @@ export function formatTypedTurkishNumber(
       fracDigits = fracClean.slice(0, options.maxFractionDigits)
     }
   } else {
-    const english = compact.match(ENGLISH_DECIMAL)
-    if (english && !THOUSANDS_ONLY.test(compact) && options.maxFractionDigits > 0) {
-      intDigits = english[1] ?? ''
-      fracDigits = (english[2] ?? '').slice(0, options.maxFractionDigits)
-    } else {
-      intDigits = compact.replace(/\D/g, '')
-    }
+    intDigits = compact.replace(/\D/g, '')
   }
 
   if (intDigits === '' && fracDigits === null && !trailingDecimal) return sign
@@ -119,9 +117,9 @@ export function formatTypedTurkishNumber(
   const intDisplay = formatIntegerDigits(intDigits === '' ? '0' : intDigits)
   let result = `${sign}${intDisplay}`
   if (trailingDecimal && (fracDigits === null || fracDigits === '')) {
-    result += ','
+    result += '.'
   } else if (fracDigits !== null && fracDigits.length > 0) {
-    result += `,${fracDigits}`
+    result += `.${fracDigits}`
   }
   return result
 }
@@ -129,11 +127,11 @@ export function formatTypedTurkishNumber(
 export function caretAfterFormat(previous: string, caret: number, next: string): number {
   const before = previous.slice(0, Math.max(0, caret))
   const digitCount = before.match(/\d/g)?.length ?? 0
-  const endedOnComma = before.replaceAll('.', '').endsWith(',')
+  const endedOnDecimalPoint = before.replaceAll(',', '').endsWith('.')
 
-  if (endedOnComma) {
-    const commaAt = next.indexOf(',')
-    return commaAt === -1 ? next.length : commaAt + 1
+  if (endedOnDecimalPoint) {
+    const dotAt = next.indexOf('.')
+    return dotAt === -1 ? next.length : dotAt + 1
   }
 
   let seen = 0
