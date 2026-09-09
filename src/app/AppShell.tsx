@@ -1,21 +1,26 @@
 import type { ReactNode } from 'react'
-import { SHELL_COPY } from './shellCopy.ts'
+import { ModeRow } from './ModeRow.tsx'
+import { SHELL_COPY, type CalculationMode } from './shellCopy.ts'
 
 type AppShellProps = {
+  mode: CalculationMode
+  onModeChange: (mode: CalculationMode) => void
   children: ReactNode
 }
 
 /**
  * The page frame the calculator renders inside: one 1152px sheet, the
- * masthead, and the colophon. Inherited from the TR sibling app's shell
- * (`docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`, `docs/DESIGN_DIRECTION.md`)
- * with the two-mode switch removed — this product is Quick-only (US-6/US-8 in
- * `docs/US_PRODUCT_SCOPE.md` do not authorise a Detailed US engine yet).
+ * masthead, the mode row, and the colophon. Inherited from the TR sibling
+ * app's shell (`docs/APP_ARCHITECTURE_AND_PROJECT_STRUCTURE.md`,
+ * `docs/DESIGN_DIRECTION.md`). The mode row returned once Detailed shipped
+ * an engine and a UI of its own (Phase 3/4) — before that this product was
+ * Quick-only and had nothing to switch to.
  */
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ mode, onModeChange, children }: AppShellProps) {
   return (
     <div className="qc-sheet mx-auto max-w-[1152px] overflow-x-clip border-x border-qc-rule bg-qc-surface">
       <AppHeader />
+      <ModeRow mode={mode} onModeChange={onModeChange} />
       {children}
       <AppFooter />
     </div>

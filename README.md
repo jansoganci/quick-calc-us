@@ -24,7 +24,7 @@ UI, USD, `en-US` number formatting.
 | Quick Calculation engine (Phase 1) | Done — `core/quick-us/`, `data/us/salesTaxRates.ts`, golden vector + edge cases in tests |
 | Quick Calculation UI (Phase 2) | Done — `features/quick-calc/` |
 | Detailed Feasibility engine (Phase 3) | Done — `core/detailed-us/`, golden vector + edge cases in tests |
-| Detailed Feasibility UI (Phase 4) | Not started |
+| Detailed Feasibility UI (Phase 4) | Done — `features/detailed/`; PDF export, draft autosave and charts deferred |
 
 Documentation index: [`docs/README.md`](docs/README.md).
 

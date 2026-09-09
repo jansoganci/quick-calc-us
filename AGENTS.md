@@ -9,7 +9,7 @@ This is a US-focused financial feasibility calculator for food-and-beverage busi
 - Stack: React 18, Vite, TypeScript, Tailwind CSS, daisyUI.
 - Runtime: client-side calculations, static assets on Cloudflare.
 - There is no database, authentication, or traditional application server.
-- Quick Calculation's engine (`core/quick-us/`) and UI (`features/quick-calc/`) are implemented and tested. Detailed Feasibility's engine (`core/detailed-us/`) is implemented and tested; it has no UI yet. Both engines share `data/us/salesTaxRates.ts`.
+- Quick Calculation's engine (`core/quick-us/`) and UI (`features/quick-calc/`) are implemented and tested. Detailed Feasibility's engine (`core/detailed-us/`) and UI (`features/detailed/`) are implemented and tested. Both engines share `data/us/salesTaxRates.ts`. A `ModeRow` switcher (`app/ModeRow.tsx`) lets the page hold both calculators mounted at once (`app/App.tsx`), toggling visibility rather than routing.
 
 ## Sources of truth
 
@@ -31,14 +31,15 @@ Anything marked `LOCKED` or `APPROVED` is settled. Do not redesign, optimize, or
 src/
   app/                  root composition, error boundary, global CSS
   core/quick-us/        Quick Calculation engine — implemented and tested
-  core/detailed-us/     Detailed Feasibility engine — implemented and tested, no UI yet
+  core/detailed-us/     Detailed Feasibility engine — implemented and tested
   data/us/              salesTaxRates.ts — the 50-state + DC table, single source
   features/quick-calc/  Quick Calculation screen, form state, view model
+  features/detailed/    Detailed Feasibility screen, form state, view model
   components/           reusable domain-neutral UI primitives
   lib/                  generic parsing and formatting helpers (en-US/USD)
 ```
 
-`features/detailed/` is created only once the Detailed UI phase is authorised. Tests are colocated as `*.test.ts`.
+Tests are colocated as `*.test.ts`. `features/detailed/` deliberately excludes PDF export, draft autosave/localStorage, and chart libraries — deferred, not part of this phase's scope.
 
 ## Architecture rules
 

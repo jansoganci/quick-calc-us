@@ -8,7 +8,7 @@
  */
 
 export { calculateDetailed } from './calculate.ts'
-export { DETAILED_US_DEFAULTS, RAMP_UP_TABLES } from './defaults.ts'
+export { DELIVERY_MODES, DETAILED_US_DEFAULTS, PROJECTION_HORIZONS, RAMP_UP_PRESETS, RAMP_UP_TABLES } from './defaults.ts'
 export { DETAILED_US_LIMITS, MIX_TOLERANCE } from './limits.ts'
 export type { FieldLimit } from './limits.ts'
 export { validateDetailedInput } from './validate.ts'
