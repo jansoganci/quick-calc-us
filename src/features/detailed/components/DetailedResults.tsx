@@ -33,7 +33,10 @@ export function DetailedResults({ view, canPrintReport, onOpenReport }: { view: 
       </Section>
 
       <Section index={3} title={COPY.monthlyResultTitle} flows>
-        <div className="hidden lg:block">
+        {/* `lg` also matches print (tailwind.config.ts), so the desktop-size
+            chart needs an explicit `print:hidden` or it renders alongside the
+            print-sized one below. */}
+        <div className="hidden lg:block print:hidden">
           <ProjectionChart data={view.projection} size="lg" />
         </div>
         <div className="lg:hidden">
@@ -46,7 +49,7 @@ export function DetailedResults({ view, canPrintReport, onOpenReport }: { view: 
       </Section>
 
       <Section index={4} title={COPY.payback}>
-        <div className="hidden lg:block">
+        <div className="hidden lg:block print:hidden">
           <PaybackChart data={view.paybackChart} size="lg" />
         </div>
         <div className="lg:hidden">
